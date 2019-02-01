@@ -1,8 +1,7 @@
 package com.example.android.voiceassistantcommands;
 
-import android.app.LoaderManager;
+
 import android.content.ContentValues;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -21,15 +20,18 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.voiceassistantcommands.data.CommandContract;
-import com.example.android.voiceassistantcommands.data.CommandContract.CommandsEntry;
-import com.example.android.voiceassistantcommands.data.CommandDbHelper;
 
-public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    /** EditText field to enter the command to be spoken */
+public class EditorActivity extends AppCompatActivity {
+
+    /**
+     * EditText field to enter the command to be spoken
+     */
     private EditText mCommandEditText;
 
-    /** EditText field to enter the type of assistant */
+    /**
+     * EditText field to enter the type of assistant
+     */
     private Spinner mAssistantSpinner;
 
     private int mAssistant = 0;
@@ -46,7 +48,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         Intent intent = getIntent();
         mCurrentCommandUri = intent.getData();
 
-        if (mCurrentCommandUri == null){
+        if (mCurrentCommandUri == null) {
             setTitle(getString(R.string.editor_activity_title_new_command));
         } else {
             setTitle(getString(R.string.editor_activity_title_edit_command));
@@ -57,8 +59,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mAssistantSpinner = (Spinner) findViewById(R.id.spinner_assistant);
 
         setupSpinner();
-
-        getLoaderManager().initLoader(EXISTING_COMMAND_LOADER, null, this);
 
     }
 
@@ -131,7 +131,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         return super.onOptionsItemSelected(item);
     }
 
-    private void insertCommand(){
+    private void insertCommand() {
         String commandString = mCommandEditText.getText().toString().trim();
 
         ContentValues values = new ContentValues();
@@ -150,54 +150,5 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             Toast.makeText(this, getString(R.string.editor_insert_command_successful),
                     Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        String[] projections = {
-                CommandsEntry._ID,
-                CommandsEntry.COLUMN_COMMAND_TEXT,
-                CommandsEntry.COLUMN_ASSISTANT_TYPE
-        };
-
-        return new CursorLoader( this,
-                mCurrentCommandUri,
-                projections,
-                null,
-                null,
-                null);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-
-        // Bail early if the cursor is null or there is less than 1 row in the cursor
-        if (cursor == null || cursor.getCount() < 1) {
-            return;
-        }
-
-        if (cursor.moveToFirst()){
-            int commandColumnIndex = cursor.getColumnIndex(CommandsEntry.COLUMN_COMMAND_TEXT);
-            int assistantColumnIndex = cursor.getColumnIndex(CommandsEntry.COLUMN_ASSISTANT_TYPE);
-
-            String command = cursor.getString(commandColumnIndex);
-            int assistant = cursor.getInt(assistantColumnIndex);
-
-            mCommandEditText.setText(command);
-
-            switch (assistant){
-                case CommandsEntry.ASSISTANT_ALEXA:
-                    mAssistantSpinner.setSelection(1);
-                    break;
-                case CommandsEntry.ASSISTANT_GOOGLE_HOME:
-                    mAssistantSpinner.setSelection(2);
-                    break;
-            }
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mCommandEditText.setText("");
     }
 }
