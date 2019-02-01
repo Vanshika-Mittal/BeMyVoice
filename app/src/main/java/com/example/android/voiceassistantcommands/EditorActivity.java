@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +22,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.voiceassistantcommands.data.CommandContract;
+
+import java.util.Locale;
 
 
 public class EditorActivity extends AppCompatActivity {
@@ -37,6 +41,9 @@ public class EditorActivity extends AppCompatActivity {
     private int mAssistant = 0;
 
     private Uri mCurrentCommandUri;
+
+    private TextToSpeech ttsObject;
+    int result;
 
     private static final int EXISTING_COMMAND_LOADER = 0;
 
@@ -59,6 +66,19 @@ public class EditorActivity extends AppCompatActivity {
         mAssistantSpinner = (Spinner) findViewById(R.id.spinner_assistant);
 
         setupSpinner();
+
+        ttsObject = new TextToSpeech(EditorActivity.this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+
+                if (status == TextToSpeech.SUCCESS) {
+                    result = ttsObject.setLanguage(Locale.UK);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Feature not Supported on your device",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
     }
 
@@ -150,5 +170,37 @@ public class EditorActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.editor_insert_command_successful),
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void textToSpeakButtonClick(View v) {
+        textToSpeak();
+    }
+
+    public void textToSpeak() {
+        if (result == TextToSpeech.LANG_NOT_SUPPORTED || result == TextToSpeech.LANG_MISSING_DATA) {
+
+            Toast.makeText(getApplicationContext(), "Feature not Supported on your device",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            String commandToSpeak = mCommandEditText.getText().toString();
+            String assistant = mAssistantSpinner.getSelectedItem().toString();
+            String assistantToSpeak;
+            if (assistant.equals("Google Home")) {
+                assistantToSpeak = "Ok Google";
+            } else {
+                assistantToSpeak = assistant;
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ttsObject.speak(assistantToSpeak, TextToSpeech.QUEUE_ADD, null, null);
+                ttsObject.playSilentUtterance(50, TextToSpeech.QUEUE_ADD, null);
+                ttsObject.speak(commandToSpeak, TextToSpeech.QUEUE_ADD, null, null);
+            } else {
+                ttsObject.speak(assistantToSpeak, TextToSpeech.QUEUE_ADD, null);
+                ttsObject.playSilence(50, TextToSpeech.QUEUE_ADD, null);
+                ttsObject.speak(commandToSpeak, TextToSpeech.QUEUE_ADD, null);
+            }
+        }
+
     }
 }

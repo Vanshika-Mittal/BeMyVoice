@@ -56,5 +56,15 @@
                 android:paddingRight="16dp"
                 android:spinnerMode="dropdown"/>
         </LinearLayout>
+
     </LinearLayout>
+
+    <Button
+        android:id="@+id/bspeak"
+        android:layout_width="137dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:onClick="textToSpeakButtonClick"
+        android:layout_gravity="center_horizontal"
+        android:text="Speak" />
 </LinearLayout>
