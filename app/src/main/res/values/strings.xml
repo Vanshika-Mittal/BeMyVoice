@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Voice Assistant Commands</string>
+
+    <!-- Label for overflow menu option that inserts fake pet data into the app [CHAR LIMIT=20] -->
+    <string name="action_insert_dummy_data">Insert Dummy Data</string>
+
+    <!-- Label for overflow menu option that deletes all pet data in the app [CHAR LIMIT=20] -->
+    <string name="action_delete_all_entries">Delete All Commands</string>
+
+    <!-- Title for the activity to add a new pet [CHAR LIMIT=20] -->
+    <string name="editor_activity_title_new_command">Add New Command</string>
+
+    <!-- Label for editor menu option to save pet and leave editor [CHAR LIMIT=20] -->
+    <string name="action_save">Save</string>
+
+    <!-- Label for editor overflow menu option that deletes the current pet [CHAR LIMIT=20] -->
+    <string name="action_delete">Delete</string>
+
+    <!-- Label for overview category of attributes in the editor [CHAR LIMIT=30] -->
+    <string name="category_overview">Command</string>
+
+    <!-- Label for gender information in the editor [CHAR LIMIT=30] -->
+    <string name="category_assistant_type">Assistant</string>
+
+    <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
+    <string name="hint_command_name">Enter the command you would like to give</string>
+
+    <!-- Label for dropdown menu option if the assistant is google home [CHAR LIMIT=20] -->
+    <string name="command_google_home">Google Home</string>
+
+    <!-- Label for dropdown menu option if the assistant is alexa [CHAR LIMIT=20] -->
+    <string name="command_alexa">Alexa</string>
+
+    <!-- Toast message in editor when new command has been successfully inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_insert_command_successful">Command saved</string>
+
+    <!-- Toast message in editor when new command has failed to be inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_insert_command_failed">Error with saving command</string>
+
+    <!-- Title text for the empty view, which describes the empty dog house image [CHAR LIMIT=50] -->
+    <string name="empty_view_title_text">No commands yet...</string>
+
+    <!-- Subtitle text for the empty view that prompts the user to add a pet [CHAR LIMIT=50] -->
+    <string name="empty_view_subtitle_text">Get started by adding a command</string>
+
+    <string name="editor_activity_title_edit_command">"Edit command"</string>
+</resources>
