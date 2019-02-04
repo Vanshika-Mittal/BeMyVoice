@@ -3,8 +3,6 @@ package com.example.android.voiceassistantcommands;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
@@ -45,7 +43,6 @@ public class EditorActivity extends AppCompatActivity {
     private TextToSpeech ttsObject;
     int result;
 
-    private static final int EXISTING_COMMAND_LOADER = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,14 +190,15 @@ public class EditorActivity extends AppCompatActivity {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ttsObject.speak(assistantToSpeak, TextToSpeech.QUEUE_ADD, null, null);
-                ttsObject.playSilentUtterance(50, TextToSpeech.QUEUE_ADD, null);
+                ttsObject.playSilentUtterance(500, TextToSpeech.QUEUE_ADD, null);
                 ttsObject.speak(commandToSpeak, TextToSpeech.QUEUE_ADD, null, null);
             } else {
                 ttsObject.speak(assistantToSpeak, TextToSpeech.QUEUE_ADD, null);
-                ttsObject.playSilence(50, TextToSpeech.QUEUE_ADD, null);
+                ttsObject.playSilence(500, TextToSpeech.QUEUE_ADD, null);
                 ttsObject.speak(commandToSpeak, TextToSpeech.QUEUE_ADD, null);
             }
         }
 
     }
+
 }

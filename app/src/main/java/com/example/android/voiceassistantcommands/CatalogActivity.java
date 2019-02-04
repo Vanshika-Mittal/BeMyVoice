@@ -2,24 +2,24 @@ package com.example.android.voiceassistantcommands;
 
 import android.app.LoaderManager;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.CursorLoader;
 
 import android.content.Loader;
 
 import android.database.Cursor;
 import android.content.Intent;
-import android.content.UriMatcher;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
@@ -28,8 +28,8 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.android.voiceassistantcommands.data.CommandContract.CommandsEntry;
 import com.example.android.voiceassistantcommands.data.CommandDbHelper;
 
-import static android.R.attr.data;
-import static android.R.attr.x;
+import java.util.Locale;
+
 
 public class CatalogActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -37,6 +37,9 @@ public class CatalogActivity extends AppCompatActivity
     private static final int COMMAND_LOADER = 17;
 
     CommandCursorAdapter mCommandCursorAdapter;
+
+    TextToSpeech ttsObject;
+    int result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,19 @@ public class CatalogActivity extends AppCompatActivity
         commandListView.setAdapter(mCommandCursorAdapter);
 
         getLoaderManager().initLoader(COMMAND_LOADER, null, this);
+
+        ttsObject = new TextToSpeech(CatalogActivity.this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+
+                if (status == TextToSpeech.SUCCESS) {
+                    result = ttsObject.setLanguage(Locale.UK);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Feature not Supported on your device",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         SwipeMenuCreator creator = new SwipeMenuCreator() {
 
@@ -101,6 +117,49 @@ public class CatalogActivity extends AppCompatActivity
                 }
                 // false : close the menu; true : not close the menu
                 return false;
+            }
+        });
+
+        commandListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int id, long l) {
+
+                String[] projection = {CommandsEntry.COLUMN_COMMAND_TEXT,
+                CommandsEntry.COLUMN_ASSISTANT_TYPE};
+
+                Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, id + 1);
+
+                Cursor cursor = getContentResolver().query(currentCommandUri,
+                        projection,
+                        null,
+                        null,
+                        null);
+
+                if (cursor.moveToFirst()) {
+                    int commandColumnIndex = cursor.getColumnIndex(CommandsEntry.COLUMN_COMMAND_TEXT);
+                    int assistantColumnIndex = cursor.getColumnIndex(CommandsEntry.COLUMN_ASSISTANT_TYPE);
+
+                    String commandText = cursor.getString(commandColumnIndex);
+                    String assistantNumberText = cursor.getString(assistantColumnIndex);
+                    String assistantText = "No text inputted";
+                    int assistantNumber = Integer.parseInt(assistantNumberText);
+                    if( assistantNumber == 1){
+                        assistantText = "Alexa";
+                    } if ( assistantNumber == 2){
+                        assistantText = "Ok Google";
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        ttsObject.speak(assistantText, TextToSpeech.QUEUE_ADD, null, null);
+                        ttsObject.playSilentUtterance(500, TextToSpeech.QUEUE_ADD, null);
+                        ttsObject.speak(commandText, TextToSpeech.QUEUE_ADD, null, null);
+                    } else {
+                        ttsObject.speak(assistantText, TextToSpeech.QUEUE_ADD, null);
+                        ttsObject.playSilence(500, TextToSpeech.QUEUE_ADD, null);
+                        ttsObject.speak(commandText, TextToSpeech.QUEUE_ADD, null);
+                    }
+                }
+
             }
         });
     }

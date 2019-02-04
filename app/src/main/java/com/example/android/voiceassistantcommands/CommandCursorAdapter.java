@@ -33,8 +33,8 @@ public class CommandCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView commandTextView = (TextView) view.findViewById(R.id.text_view_command_text);
-        TextView assistantTextView = (TextView) view.findViewById(R.id.text_view_assistant_name);
+        TextView commandTextView = view.findViewById(R.id.text_view_command_text);
+        TextView assistantTextView = view.findViewById(R.id.text_view_assistant_name);
 
         int commandColumnIndex = cursor.getColumnIndex(CommandsEntry.COLUMN_COMMAND_TEXT);
         int assistantColumnIndex = cursor.getColumnIndex(CommandsEntry.COLUMN_ASSISTANT_TYPE);
