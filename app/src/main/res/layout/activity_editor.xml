@@ -61,10 +61,11 @@
 
     <Button
         android:id="@+id/bspeak"
-        android:layout_width="137dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="37dp"
         android:onClick="textToSpeakButtonClick"
-        android:layout_gravity="center_horizontal"
-        android:text="Speak" />
+        android:drawableLeft="@drawable/ic_mic"
+        android:text="Speak"/>
 </LinearLayout>

@@ -8,9 +8,12 @@
 
     <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/list"
+        android:divider="@null"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        android:background="#F5F5F5"
+        android:paddingTop="@dimen/activity_margin"
+        android:paddingBottom="@dimen/activity_margin"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
