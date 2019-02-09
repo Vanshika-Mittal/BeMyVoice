@@ -20,14 +20,15 @@
             style="@style/CategoryStyle" />
 
             <!-- Command field -->
-            <EditText
-                android:id="@+id/edit_command"
-                android:hint="@string/hint_command_name"
-                android:inputType="textLongMessage"
-                style="@style/EditorFieldStyle"
-                android:layout_width="375dp"
-                android:layout_height="110dp" />
-        </LinearLayout>
+        <EditText
+            android:id="@+id/edit_command"
+            style="@style/EditorFieldStyle"
+            android:layout_width="375dp"
+            android:layout_height="110dp"
+            android:hint="@string/hint_command_name"
+            android:backgroundTint="@color/editorColorAccent"
+            android:inputType="textLongMessage" />
+    </LinearLayout>
 
     <!-- Type of Assistant category -->
     <LinearLayout

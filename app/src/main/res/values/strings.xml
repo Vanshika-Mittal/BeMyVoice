@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">Voice Assistant Commands</string>
+    <string name="app_name">BeMyVoice</string>
+
+    <string name="catalog_activity_label">What can I do for you?</string>
 
     <!-- Label for overflow menu option that inserts fake pet data into the app [CHAR LIMIT=20] -->
     <string name="action_insert_dummy_data">Insert Dummy Data</string>
@@ -8,7 +10,7 @@
     <string name="action_delete_all_entries">Delete All Commands</string>
 
     <!-- Title for the activity to add a new pet [CHAR LIMIT=20] -->
-    <string name="editor_activity_title_new_command">Add New Command</string>
+    <string name="editor_activity_title_new_command">Add A Command</string>
 
     <!-- Label for editor menu option to save pet and leave editor [CHAR LIMIT=20] -->
     <string name="action_save">Save</string>
@@ -23,7 +25,7 @@
     <string name="category_assistant_type">Assistant</string>
 
     <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
-    <string name="hint_command_name">Enter the command you would like to give</string>
+    <string name="hint_command_name">e.g. Tell me a joke</string>
 
     <!-- Label for dropdown menu option if the assistant is google home [CHAR LIMIT=20] -->
     <string name="command_google_home">Google Home</string>
