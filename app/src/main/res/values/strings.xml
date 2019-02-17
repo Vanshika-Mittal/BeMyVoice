@@ -39,6 +39,12 @@
     <!-- Toast message in editor when new command has failed to be inserted [CHAR LIMIT=NONE] -->
     <string name="editor_insert_command_failed">Error with saving command</string>
 
+    <!-- Toast message in editor when new command has been successfully inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_update_command_successful">Command updated</string>
+
+    <!-- Toast message in editor when new command has failed to be inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_update_command_failed">Error with updating command</string>
+
     <!-- Title text for the empty view, which describes the empty dog house image [CHAR LIMIT=50] -->
     <string name="empty_view_title_text">No commands yet...</string>
 

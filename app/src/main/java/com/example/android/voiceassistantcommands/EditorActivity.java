@@ -28,7 +28,7 @@ import com.example.android.voiceassistantcommands.data.CommandContract;
 import java.util.Locale;
 
 
-public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * EditText field to enter the command to be spoken
@@ -141,7 +141,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                insertCommand();
+                saveCommand();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
@@ -156,24 +156,40 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         return super.onOptionsItemSelected(item);
     }
 
-    private void insertCommand() {
+    private void saveCommand() {
         String commandString = mCommandEditText.getText().toString().trim();
 
         ContentValues values = new ContentValues();
         values.put(CommandContract.CommandsEntry.COLUMN_COMMAND_TEXT, commandString);
         values.put(CommandContract.CommandsEntry.COLUMN_ASSISTANT_TYPE, mAssistant);
 
-        Uri newUri = getContentResolver().insert(CommandContract.CommandsEntry.CONTENT_URI, values);
-
         // Show a toast message depending on whether or not the insertion was successful
-        if (newUri == null) {
+        if (mCurrentCommandUri == null) {
             // If the new content URI is null, then there was an error with insertion.
-            Toast.makeText(this, getString(R.string.editor_insert_command_failed),
-                    Toast.LENGTH_SHORT).show();
+            Uri newUri = getContentResolver().insert(CommandContract.CommandsEntry.CONTENT_URI, values);
+
+            if (newUri == null) {
+
+                Toast.makeText(this, getString(R.string.editor_insert_command_failed),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                // Otherwise, the insertion was successful and we can display a toast.
+                Toast.makeText(this, getString(R.string.editor_insert_command_successful),
+                        Toast.LENGTH_SHORT).show();
+            }
         } else {
-            // Otherwise, the insertion was successful and we can display a toast.
-            Toast.makeText(this, getString(R.string.editor_insert_command_successful),
-                    Toast.LENGTH_SHORT).show();
+
+            int rowsAffected = getContentResolver().update(mCurrentCommandUri, values, null, null);
+
+            if (rowsAffected == 0) {
+                // If no rows were affected, then there was an error with the update.
+                Toast.makeText(this, getString(R.string.editor_update_command_failed),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                // Otherwise, the update was successful and we can display a toast.
+                Toast.makeText(this, getString(R.string.editor_update_command_successful),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -226,7 +242,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
 
             int commandColumnIndex = cursor.getColumnIndex(CommandContract.CommandsEntry.COLUMN_COMMAND_TEXT);
             int assistantColumnIndex = cursor.getColumnIndex(CommandContract.CommandsEntry.COLUMN_ASSISTANT_TYPE);
@@ -236,9 +252,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
             mCommandEditText.setText(commandText);
 
-            if(assistant == CommandContract.CommandsEntry.ASSISTANT_GOOGLE_HOME){
+            if (assistant == CommandContract.CommandsEntry.ASSISTANT_GOOGLE_HOME) {
                 mAssistantSpinner.setSelection(0);
-            }else {
+            } else {
                 mAssistantSpinner.setSelection(1);
             }
 
