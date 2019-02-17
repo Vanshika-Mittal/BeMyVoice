@@ -3,10 +3,14 @@ package com.example.android.voiceassistantcommands;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -24,7 +28,7 @@ import com.example.android.voiceassistantcommands.data.CommandContract;
 import java.util.Locale;
 
 
-public class EditorActivity extends AppCompatActivity {
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     /**
      * EditText field to enter the command to be spoken
@@ -43,6 +47,8 @@ public class EditorActivity extends AppCompatActivity {
     private TextToSpeech ttsObject;
     int result;
 
+    private static final int EXISTING_PET_LOADER = 17;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,8 @@ public class EditorActivity extends AppCompatActivity {
             setTitle(getString(R.string.editor_activity_title_new_command));
         } else {
             setTitle(getString(R.string.editor_activity_title_edit_command));
+
+            getSupportLoaderManager().initLoader(EXISTING_PET_LOADER, null, this);
         }
 
         // Find all relevant views that we will need to read user input from
@@ -201,4 +209,47 @@ public class EditorActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {CommandContract.CommandsEntry._ID,
+                CommandContract.CommandsEntry.COLUMN_COMMAND_TEXT,
+                CommandContract.CommandsEntry.COLUMN_ASSISTANT_TYPE};
+
+        return new CursorLoader(this,
+                mCurrentCommandUri,
+                projection,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+
+        if(cursor.moveToFirst()){
+
+            int commandColumnIndex = cursor.getColumnIndex(CommandContract.CommandsEntry.COLUMN_COMMAND_TEXT);
+            int assistantColumnIndex = cursor.getColumnIndex(CommandContract.CommandsEntry.COLUMN_ASSISTANT_TYPE);
+
+            String commandText = cursor.getString(commandColumnIndex);
+            int assistant = cursor.getInt(assistantColumnIndex);
+
+            mCommandEditText.setText(commandText);
+
+            if(assistant == CommandContract.CommandsEntry.ASSISTANT_GOOGLE_HOME){
+                mAssistantSpinner.setSelection(0);
+            }else {
+                mAssistantSpinner.setSelection(1);
+            }
+
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+        mCommandEditText.setText("");
+        mAssistantSpinner.setSelection(1);
+
+    }
 }

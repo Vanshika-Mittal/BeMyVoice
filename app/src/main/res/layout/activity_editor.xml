@@ -68,5 +68,8 @@
         android:layout_marginTop="37dp"
         android:onClick="textToSpeakButtonClick"
         android:drawableLeft="@drawable/ic_mic"
-        android:text="Speak"/>
+        android:drawableTint="@android:color/white"
+        android:background="@color/colorAccent"
+        android:text="Speak"
+        android:textColor="@android:color/white"/>
 </LinearLayout>

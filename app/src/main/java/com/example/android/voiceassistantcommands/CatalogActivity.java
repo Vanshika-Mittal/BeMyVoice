@@ -1,22 +1,19 @@
 package com.example.android.voiceassistantcommands;
 
 import android.app.LoaderManager;
-import android.content.ContentUris;
+
 import android.content.CursorLoader;
 
 import android.content.Loader;
-
+import android.content.ContentUris;
 import android.database.Cursor;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
@@ -26,7 +23,6 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.android.voiceassistantcommands.data.CommandContract.CommandsEntry;
-import com.example.android.voiceassistantcommands.data.CommandDbHelper;
 
 import java.util.Locale;
 
@@ -90,7 +86,7 @@ public class CatalogActivity extends AppCompatActivity
                 SwipeMenuItem editItem = new SwipeMenuItem(
                         getApplicationContext());
                 // set item background
-                editItem.setBackground(R.color.editorColorPrimaryDark);
+                editItem.setBackground(R.color.colorAccent);
                 // set item width
                 editItem.setWidth(178);
                 // set item title
@@ -105,18 +101,15 @@ public class CatalogActivity extends AppCompatActivity
 
         commandListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                switch (index) {
-                    case 0:
-                        Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int id) {
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
 
-                        Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, index);
+                Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, position + 1);
 
-                        intent.setData(currentCommandUri);
+                intent.setData(currentCommandUri);
 
-                        startActivity(intent);
-                        break;
-                }
+                startActivity(intent);
+
                 // false : close the menu; true : not close the menu
                 return false;
             }
@@ -127,7 +120,7 @@ public class CatalogActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int id, long l) {
 
                 String[] projection = {CommandsEntry.COLUMN_COMMAND_TEXT,
-                CommandsEntry.COLUMN_ASSISTANT_TYPE};
+                        CommandsEntry.COLUMN_ASSISTANT_TYPE};
 
                 Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, id + 1);
 
@@ -145,9 +138,10 @@ public class CatalogActivity extends AppCompatActivity
                     String assistantNumberText = cursor.getString(assistantColumnIndex);
                     String assistantText = "No text inputted";
                     int assistantNumber = Integer.parseInt(assistantNumberText);
-                    if( assistantNumber == 1){
+                    if (assistantNumber == 1) {
                         assistantText = "Alexa";
-                    } if ( assistantNumber == 2){
+                    }
+                    if (assistantNumber == 2) {
                         assistantText = "Ok Google";
                     }
 
