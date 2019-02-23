@@ -8,6 +8,7 @@ import android.content.Loader;
 import android.content.ContentUris;
 import android.database.Cursor;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.android.voiceassistantcommands.data.CommandContract.CommandsEntry;
+import com.scwang.wave.MultiWaveHeader;
 
 import java.util.Locale;
 
@@ -36,11 +38,18 @@ public class CatalogActivity extends AppCompatActivity
 
     TextToSpeech ttsObject;
     int result;
+    private AudioManager mAudioManager;
+    private int media_current_volume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
+
+        // Get the audio manager instance
+        mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+
+        media_current_volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
         this.setTitle(getResources().getString(R.string.catalog_activity_label));
 
@@ -145,6 +154,10 @@ public class CatalogActivity extends AppCompatActivity
                         assistantText = "Ok Google";
                     }
 
+                    mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, // Stream type
+                            mAudioManager.getStreamMaxVolume(mAudioManager.STREAM_MUSIC), // Index
+                            AudioManager.FLAG_SHOW_UI);
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         ttsObject.speak(assistantText, TextToSpeech.QUEUE_ADD, null, null);
                         ttsObject.playSilentUtterance(500, TextToSpeech.QUEUE_ADD, null);
@@ -153,7 +166,9 @@ public class CatalogActivity extends AppCompatActivity
                         ttsObject.speak(assistantText, TextToSpeech.QUEUE_ADD, null);
                         ttsObject.playSilence(500, TextToSpeech.QUEUE_ADD, null);
                         ttsObject.speak(commandText, TextToSpeech.QUEUE_ADD, null);
+
                     }
+
                 }
 
             }
@@ -184,5 +199,18 @@ public class CatalogActivity extends AppCompatActivity
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mCommandCursorAdapter.swapCursor(null);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ttsObject.stop();
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+                media_current_volume, AudioManager.FLAG_SHOW_UI);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ttsObject.stop();
     }
 }
