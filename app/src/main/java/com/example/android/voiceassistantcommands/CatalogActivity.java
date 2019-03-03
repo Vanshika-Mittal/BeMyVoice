@@ -6,6 +6,7 @@ import android.content.CursorLoader;
 
 import android.content.Loader;
 import android.content.ContentUris;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
@@ -24,9 +26,10 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.android.voiceassistantcommands.data.CommandContract.CommandsEntry;
-import com.scwang.wave.MultiWaveHeader;
 
 import java.util.Locale;
+
+import static com.example.android.voiceassistantcommands.R.id.fab;
 
 
 public class CatalogActivity extends AppCompatActivity
@@ -54,7 +57,7 @@ public class CatalogActivity extends AppCompatActivity
         this.setTitle(getResources().getString(R.string.catalog_activity_label));
 
         // Setup FAB to open EditorActivity
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -206,7 +209,7 @@ public class CatalogActivity extends AppCompatActivity
         super.onStop();
         ttsObject.stop();
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                media_current_volume, AudioManager.FLAG_SHOW_UI);
+                media_current_volume, AudioManager.FLAG_PLAY_SOUND);
     }
     @Override
     protected void onPause() {

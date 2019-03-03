@@ -260,6 +260,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 // Otherwise, the insertion was successful and we can display a toast.
                 Toast.makeText(this, getString(R.string.editor_insert_command_successful),
                         Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(EditorActivity.this, CatalogActivity.class);
+                startActivity(intent);
+
             }
         } else {
 
@@ -433,7 +436,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         super.onStop();
         ttsObject.stop();
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                media_current_volume, AudioManager.FLAG_SHOW_UI);
+                media_current_volume, AudioManager.FLAG_PLAY_SOUND);
 
     }
     @Override
