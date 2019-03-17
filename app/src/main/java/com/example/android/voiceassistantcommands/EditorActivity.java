@@ -276,11 +276,15 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 // Otherwise, the update was successful and we can display a toast.
                 Toast.makeText(this, getString(R.string.editor_update_command_successful),
                         Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(EditorActivity.this, CatalogActivity.class);
+                startActivity(intent);
             }
         }
     }
 
     private void deleteCommand() {
+
+        Toast.makeText(this, mCurrentCommandUri.toString(), Toast.LENGTH_LONG).show();
         // Only perform the delete if this is an existing pet.
         if (mCurrentCommandUri != null) {
             // Call the ContentResolver to delete the pet at the given content URI.

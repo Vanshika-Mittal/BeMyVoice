@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -29,7 +30,9 @@ import com.example.android.voiceassistantcommands.data.CommandContract.CommandsE
 
 import java.util.Locale;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 import static com.example.android.voiceassistantcommands.R.id.fab;
+import static com.example.android.voiceassistantcommands.R.id.list_item;
 
 
 public class CatalogActivity extends AppCompatActivity
@@ -66,7 +69,7 @@ public class CatalogActivity extends AppCompatActivity
             }
         });
 
-        SwipeMenuListView commandListView = (SwipeMenuListView) findViewById(R.id.list);
+        final SwipeMenuListView commandListView = (SwipeMenuListView) findViewById(R.id.list);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_view);
@@ -113,10 +116,13 @@ public class CatalogActivity extends AppCompatActivity
 
         commandListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int id) {
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                String positionString = ((Integer) position).toString();
+                Toast.makeText(CatalogActivity.this, positionString , Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
 
-                Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, position + 1);
+//FIXME:
+                Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, position );
 
                 intent.setData(currentCommandUri);
 
@@ -129,12 +135,14 @@ public class CatalogActivity extends AppCompatActivity
 
         commandListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int id, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long position) {
+                String positionString = Long.toString(position);
+                Toast.makeText(CatalogActivity.this, positionString , Toast.LENGTH_SHORT).show();
 
                 String[] projection = {CommandsEntry.COLUMN_COMMAND_TEXT,
                         CommandsEntry.COLUMN_ASSISTANT_TYPE};
-
-                Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, id + 1);
+//FIXME:
+                Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, position);
 
                 Cursor cursor = getContentResolver().query(currentCommandUri,
                         projection,
@@ -148,7 +156,7 @@ public class CatalogActivity extends AppCompatActivity
 
                     String commandText = cursor.getString(commandColumnIndex);
                     String assistantNumberText = cursor.getString(assistantColumnIndex);
-                    String assistantText = "No text inputted";
+                    String assistantText = "";
                     int assistantNumber = Integer.parseInt(assistantNumberText);
                     if (assistantNumber == 1) {
                         assistantText = "Alexa";
@@ -211,6 +219,7 @@ public class CatalogActivity extends AppCompatActivity
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
                 media_current_volume, AudioManager.FLAG_PLAY_SOUND);
     }
+
     @Override
     protected void onPause() {
         super.onPause();
