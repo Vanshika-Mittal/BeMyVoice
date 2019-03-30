@@ -141,7 +141,7 @@ public class CatalogActivity extends AppCompatActivity
 
                 String[] projection = {CommandsEntry.COLUMN_COMMAND_TEXT,
                         CommandsEntry.COLUMN_ASSISTANT_TYPE};
-//FIXME:
+
                 Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, position);
 
                 Cursor cursor = getContentResolver().query(currentCommandUri,
