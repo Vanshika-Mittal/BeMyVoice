@@ -20,19 +20,11 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
-
-import com.baoyz.swipemenulistview.SwipeMenu;
-import com.baoyz.swipemenulistview.SwipeMenuCreator;
-import com.baoyz.swipemenulistview.SwipeMenuItem;
-import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.android.voiceassistantcommands.data.CommandContract.CommandsEntry;
 
 import java.util.Locale;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-import static com.example.android.voiceassistantcommands.R.id.fab;
-import static com.example.android.voiceassistantcommands.R.id.list_item;
 
 
 public class CatalogActivity extends AppCompatActivity
@@ -57,29 +49,6 @@ public class CatalogActivity extends AppCompatActivity
 
         media_current_volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
-        this.setTitle(getResources().getString(R.string.catalog_activity_label));
-
-        // Setup FAB to open EditorActivity
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        final SwipeMenuListView commandListView = (SwipeMenuListView) findViewById(R.id.list);
-
-        // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
-        View emptyView = findViewById(R.id.empty_view);
-        commandListView.setEmptyView(emptyView);
-
-        mCommandCursorAdapter = new CommandCursorAdapter(this, null);
-        commandListView.setAdapter(mCommandCursorAdapter);
-
-        getLoaderManager().initLoader(COMMAND_LOADER, null, this);
-
         ttsObject = new TextToSpeech(CatalogActivity.this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -93,51 +62,35 @@ public class CatalogActivity extends AppCompatActivity
             }
         });
 
-        SwipeMenuCreator creator = new SwipeMenuCreator() {
+        this.setTitle(getResources().getString(R.string.catalog_activity_label));
 
+        // Setup FAB to open EditorActivity
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void create(SwipeMenu menu) {
-                // create "open" item
-                SwipeMenuItem editItem = new SwipeMenuItem(
-                        getApplicationContext());
-                // set item background
-                editItem.setBackground(R.color.colorAccent);
-                // set item width
-                editItem.setWidth(178);
-                // set item title
-                editItem.setIcon(R.drawable.ic_edit);
-                // add to menu
-                menu.addMenuItem(editItem);
-            }
-        };
-
-// set creator
-        commandListView.setMenuCreator(creator);
-
-        commandListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                String positionString = ((Integer) position).toString();
-                Toast.makeText(CatalogActivity.this, positionString , Toast.LENGTH_SHORT).show();
+            public void onClick(View view) {
                 Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
-
-//FIXME:
-                Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, position );
-
-                intent.setData(currentCommandUri);
-
                 startActivity(intent);
-
-                // false : close the menu; true : not close the menu
-                return false;
             }
         });
+
+        // Find the ListView which will be populated with the pet data
+        ListView commandListView = (ListView) findViewById(R.id.list);
+
+        // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
+        View emptyView = findViewById(R.id.empty_view);
+        commandListView.setEmptyView(emptyView);
+
+        // Setup an Adapter to create a list item for each row of pet data in the Cursor.
+        // There is no pet data yet (until the loader finishes) so pass in null for the Cursor.
+        mCommandCursorAdapter = new CommandCursorAdapter(this, null);
+        commandListView.setAdapter(mCommandCursorAdapter);
+
+        getLoaderManager().initLoader(COMMAND_LOADER, null, this);
 
         commandListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long position) {
-                String positionString = Long.toString(position);
-                Toast.makeText(CatalogActivity.this, positionString , Toast.LENGTH_SHORT).show();
 
                 String[] projection = {CommandsEntry.COLUMN_COMMAND_TEXT,
                         CommandsEntry.COLUMN_ASSISTANT_TYPE};
@@ -184,6 +137,21 @@ public class CatalogActivity extends AppCompatActivity
 
             }
         });
+
+        commandListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            public boolean onItemLongClick(AdapterView<?> adapterView, View v, int index, long position) {
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+
+                Uri currentCommandUri = ContentUris.withAppendedId(CommandsEntry.CONTENT_URI, position );
+
+                intent.setData(currentCommandUri);
+
+                startActivity(intent);
+                return false;
+            }
+        });
+
     }
 
 
@@ -225,4 +193,12 @@ public class CatalogActivity extends AppCompatActivity
         super.onPause();
         ttsObject.stop();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ttsObject.stop();
+        ttsObject.shutdown();
+    }
 }
+

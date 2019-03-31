@@ -283,8 +283,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     private void deleteCommand() {
-
-        Toast.makeText(this, mCurrentCommandUri.toString(), Toast.LENGTH_LONG).show();
         // Only perform the delete if this is an existing pet.
         if (mCurrentCommandUri != null) {
             // Call the ContentResolver to delete the pet at the given content URI.
@@ -447,5 +445,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     protected void onPause() {
         super.onPause();
         ttsObject.stop();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ttsObject.stop();
+        ttsObject.shutdown();
     }
 }
