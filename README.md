@@ -1,4 +1,4 @@
-# VoiceAssistantCommands
+# Be My Voice
 
 Inclusion is possible when you reduce dependency. Voice Assistants are the technology of the future and are activated by verbal commands. Choosing to benefit from digital technology, the Be My Voice app empowers the voiceless by enabling them to live a more independent life.
 
